@@ -15,3 +15,5 @@ yarn-error.log
 deploy.php
 hosts.yml
 .env.prod
+/public/storage/*
+.composer.lock

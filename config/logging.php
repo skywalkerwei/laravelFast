@@ -63,8 +63,25 @@ return [
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => 'info',
             'days' => 14,
+            'permission'=>0666,
+        ],
+
+        'request' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/request.log'),
+            'level' => 'info',
+            'days' => 7,
+            'permission'=>0666,
+        ],
+
+        'sql' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/sql.log'),
+            'level' => 'info',
+            'days' => 7,
+            'permission'=>0666,
         ],
 
         'slack' => [
@@ -115,5 +132,7 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
     ],
+
+
 
 ];
