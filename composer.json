@@ -1,7 +1,7 @@
 {
-    "name": "jiannei/laravel-api-starter",
+    "name": "kyle/laravel-starter",
     "type": "project",
-    "description": "The Laravel Api Starter template.",
+    "description": "The Laravel  Starter template.",
     "keywords": [
         "framework",
         "laravel",
@@ -17,7 +17,9 @@
         "laravel/framework": "^9.2",
         "laravel/horizon": "^5.9",
         "laravel/sanctum": "^2.14.1",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+        "overtrue/laravel-easy-sms": "^2.0",
+        "yansongda/laravel-pay": "~3.1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
