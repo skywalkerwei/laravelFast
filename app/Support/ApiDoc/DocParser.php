@@ -70,13 +70,14 @@ class DocParser
     }
 
     private function setParam($param, $value) {
-        if ($param == 'param' || $param == 'header')
-            $value = $this->formatParam( $value );
+//        if ($param == 'param' || $param == 'header')
+//            $value = $this->formatParam( $value );
         if ($param == 'class')
             list ( $param, $value ) = $this->formatClass ( $value );
 
         if($param == 'return' || $param == 'param' || $param == 'header'){
-            $this->params [$param][] = $value;
+//            $this->params [$param][] = $value;
+            $this->params [$param][] = $this->formatParam( $value );
         }else if (empty ( $this->params [$param] )) {
             $this->params [$param] = $value;
         } else {
@@ -109,7 +110,7 @@ class DocParser
         if(preg_match_all('/(\w+):(.*?)[\s\n]/s', $string, $meatchs)){
             $param = [];
             foreach ($meatchs[1] as $key=>$value){
-                $param[$meatchs[1][$key]] = $this->getParamType($meatchs[2][$key]);
+                $param[$meatchs[1][$key]] = self::getParamType($meatchs[2][$key]);
             }
             return $param;
         }else{
@@ -117,7 +118,7 @@ class DocParser
         }
     }
 
-    private function getParamType($type){
+    static function getParamType($type){
         $typeMaps = [
             'string' => '字符串',
             'int' => '整型',

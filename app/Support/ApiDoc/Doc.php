@@ -1,19 +1,20 @@
 <?php
-
 namespace App\Support\ApiDoc;
+
+use Illuminate\Support\Arr;
 
 class Doc
 {
     protected  $config = [
         'title'=>'APi接口文档',
         'version'=>'1.0.0',
-        'copyright'=>'Powered By ypai',
+        'copyright'=>'',
         'password' => '',
         'static_path' => '',
         'controller' => [],
         'filter_method'=>['_empty'],
         'return_format' => [
-            'status' => "200/300/301/302",
+            'status' => "200",
             'message' => "提示信息",
         ]
     ];
@@ -199,6 +200,7 @@ class Doc
                 $action_doc['param'] = isset($action_doc['param']) ? array_merge($class_doc['param'], $action_doc['param']) : $class_doc['param'];
             }
         }
+
         return $action_doc;
     }
 
@@ -227,10 +229,10 @@ class Doc
                         {
                             $action_doc = $doc->parse($doc_str);
                             $action_doc['name'] = $class."::".$action->name;
-                            if((isset($action_doc['title']) && strpos($action_doc['title'], (string)$keyword) !== false)
-//                                || (isset($action_doc['description']) && strpos($action_doc['description'], $keyword) !== false)
-                                || (isset($action_doc['author']) && strpos($action_doc['author'], (string)$keyword) !== false)
-                                || (isset($action_doc['url'])  && strpos($action_doc['url'], (string)$keyword) !== false))
+                            if((isset($action_doc['title']) && strpos($action_doc['title'], $keyword) !== false)
+                                || (isset($action_doc['description']) && strpos($action_doc['description'], $keyword) !== false)
+                                || (isset($action_doc['author']) && strpos($action_doc['author'], $keyword) !== false)
+                                || (isset($action_doc['url'])  && strpos($action_doc['url'], $keyword) !== false))
                             {
                                 array_push($list, $action_doc);
                             }
@@ -247,7 +249,7 @@ class Doc
      * @param array $doc
      * @return string
      */
-    public function formatReturn($doc = [])
+    public function _formatReturn($doc = [])
     {
         $json = '{<br>';
         $data = $this->config['return_format'];
@@ -268,6 +270,84 @@ class Doc
         $json .= '&nbsp;&nbsp;}<br/>';
         $json .= '}';
         return $json;
+    }
+
+    public function formatReturn($doc = []){
+        $result=[];
+        $data = $this->config['return_format'];
+        if($data){
+            if(Arr::isAssoc($data)){
+                foreach ($data as $name=>$value){
+                    $result[$name]=[
+                        'name'=>$name,
+                        'type'=>'',
+                        'desc'=>$value
+                    ];
+                }
+            }else{
+                $result=array_merge($result,$data);
+            }
+        }
+
+        if(isset($doc['return'])){
+            $returns=[];
+            foreach(array_merge($result,$doc['return']) as $item){
+                if(count($item)===1){
+                    if($keys=array_keys($item)){
+                        $returns[]=$this->addArr($returns,$keys[0],['desc'=>$item[$keys[0]]]);
+                    }
+                }else{
+                    if(isset($item['name'])){
+                        $returns[]=$this->addArr($returns,$item['name'],$item);
+                    }
+                }
+            }
+
+            $result=$returns['_children']??[];
+        }
+        return $this->treeToString($result);
+    }
+
+    protected function addArr(&$array,$key,$value){
+        if (is_null($key)) {
+            return $array = $value;
+        }
+        $keys = explode('.', $key);
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+            if (! isset($array['_children'][$key]) || ! is_array($array['_children'][$key])) {
+                $array['_children'][$key] = [
+                    'name'=>$key,
+                    'type'=>'',
+                    'desc'=>'',
+                ];
+            }
+            $array = &$array['_children'][$key];
+        }
+        $key=array_shift($keys);
+        $array['_children'][$key]['name']=$key;
+        $array['_children'][$key]['type']=DocParser::getParamType($value['type']??'');
+        $array['_children'][$key]['desc']=$value['desc']??'';
+        return $array;
+    }
+
+    protected function treeToString($arr,$result=[],$level=0){
+        foreach($arr as $item){
+            $name=$item['name']??'';
+            for($i=0;$i<$level;$i++){
+                $name='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$name;
+            }
+            $result[]=[
+                'name'=>$name,
+                'type'=>$item['type']??'',
+                'desc'=>$item['desc']??'',
+            ];
+            if(isset($item['_children'])){
+                $result=$this->treeToString($item['_children'],$result,$level+1);
+            }
+        }
+
+        return $result;
     }
 
     /**

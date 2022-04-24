@@ -16,7 +16,7 @@
     <div class="jumbotron">
 
         <h2>{{$doc['title']??'未知'}}</h2>
-        <p>地址：{{$api}}{{$doc['url']??''}} <span class="label label-default">{{$doc['method']??''}}</span></p>
+        <p>地址：{{$api}}{{$doc['url']??''}} <span class="label label-success">{{$doc['method']??''}}</span></p>
 
         <p class="bg-success">{{$doc['description']??''}}</p>
 
@@ -27,84 +27,93 @@
         <div class="tab-content">
             <!--info-->
             <div class="tab-pane fade in active" id="info">
-            <br>
+                <br>
 
                 @if(!empty($doc['header']))
-                <div class="panel panel-primary" style="border-color: #1a2933;">
-                    <div class="panel-heading" style="border-color: #1a2933;background-color: #1a2933">
-                        <h3>请求Headers</h3>
+                    <div class="panel panel-primary" style="border-color: #00A881;">
+                        <div class="panel-heading" style="border-color: #00A881;background-color: #00A881">
+                            <h3>请求Headers</h3>
+                        </div>
+                        <div class="panel-body" id="span_result">
+                            <table class="table table-striped" > <!-- style="table-layout: fixed" -->
+                                <tr><th style="min-width: 100px">名称</th><th style="min-width: 100px">是否必填</th><th style="min-width: 100px">默认值</th><th>说明</th></tr>
+                                @foreach($doc['header'] as $head)
+                                    <tr>
+                                        <td>{{$head['name']??''}}</td>
+                                        <td>@if($head['require']==1) 必填 @else 非必填 @endif</td>
+                                        <td>{{$head['default']??''}}</td>
+                                        <td>{{$head['desc']??''}}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
                     </div>
+
+                @endif
+
+                @if(!empty($doc['param']))
+                    <div class="panel panel-primary" style="border-color: #00A881;">
+                        <div class="panel-heading" style="border-color: #00A881;background-color: #00A881">
+                            <h3>接口参数</h3>
+                        </div>
+                        <div class="panel-body" id="span_result">
+                            <table class="table table-striped" >
+                                <tr><th>参数名字</th><th>类型</th><th>是否必须</th><th>默认值</th><th>其他</th><th>说明</th></tr>
+                                @foreach($doc['param'] as $param)
+
+                                    <tr>
+                                        <td>{{$param['name']??''}}</td>
+                                        <td>{{$param['type']??''}}</td>
+                                        <td>@if($param['require']==1)必填 @else 非必填 @endif</td>
+                                        <td>{{$param['default']??''}}</td>
+                                        <td>{{$param['other']??''}}</td>
+                                        <td>{{$param['desc']??''}}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+                @endif
+
+                @if(!empty($doc['remark']))
+                    <div class="panel panel-primary" style="border-color: #00A881;">
+                        <div class="panel-heading" style="border-color: #00A881;background-color: #00A881">
+                            <h3>备注说明</h3>
+                        </div>
+                        <div class="panel-body" id="span_result">
+                            <div role="alert" class="alert alert-info">
+                                {{$doc['remark']}}
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                <div class="panel panel-primary" style="border-color: #00A881;">
+                    <div class="panel-heading" style="border-color: #00A881;background-color: #00A881">
+                        <h3>返回结果</h3>
+                    </div>
+
                     <div class="panel-body" id="span_result">
-                        <table class="table table-striped" > <!-- style="table-layout: fixed" -->
-                            <tr><th style="min-width: 100px">名称</th><th style="min-width: 100px">是否必填</th><th style="min-width: 100px">默认值</th><th>说明</th></tr>
-                            @foreach($doc['header'] as $head)
-                            <tr>
-                                <td>{{$head['name']??''}}</td>
-                                <td>@if($head['require']==1) 必填 @else 非必填 @endif</td>
-                                <td>{{$head['default']??''}}</td>
-                                <td>{{$head['desc']??''}}</td>
-                            </tr>
+                        <table class="table table-striped" >
+                            <tr><th>参数名字</th><th>类型</th><th>说明</th></tr>
+                            @foreach($return as $param)
+                                <tr>
+                                    <td>{{$param['name']??''}}</td>
+                                    <td>{{$param['type']??''}}</td>
+                                    <td>{{$param['desc']??''}}</td>
+                                </tr>
                             @endforeach
                         </table>
                     </div>
                 </div>
 
-                @endif
-
-                @if(!empty($doc['param']))
-                <div class="panel panel-primary" style="border-color: #1a2933;">
-                    <div class="panel-heading" style="border-color: #1a2933;background-color: #1a2933">
-                        <h3>接口参数</h3>
-                    </div>
-                    <div class="panel-body" id="span_result">
-                        <table class="table table-striped" >
-                            <tr><th>参数名字</th><th>类型</th><th>是否必须</th><th>默认值</th><th>其他</th><th>说明</th></tr>
-                            @foreach($doc['param'] as $param)
-
-                            <tr>
-                                <td>{{$param['name']??''}}</td>
-                                <td>{{$param['type']??''}}</td>
-                                <td>@if($param['require']==1)必填 @else 非必填 @endif</td>
-                                <td>{{$param['default']??''}}</td>
-                                <td>{{$param['other']??''}}</td>
-                                <td>{{$param['desc']??''}}</td>
-                            </tr>
-                           @endforeach
-                        </table>
-                    </div>
-                </div>
-                @endif
-
-                @if(!empty($doc['remark']))
-                <div class="panel panel-primary" style="border-color: #1a2933;">
-                    <div class="panel-heading" style="border-color: #1a2933;background-color: #1a2933">
-                        <h3>备注说明</h3>
-                    </div>
-                    <div class="panel-body" id="span_result">
-                        <div role="alert" class="alert alert-info">
-                            {{$doc['remark']}}
-                        </div>
-                    </div>
-                </div>
-               @endif
-                <div class="panel panel-primary" style="border-color: #1a2933;">
-                    <div class="panel-heading" style="border-color: #1a2933;background-color: #1a2933">
-                        <h3>返回结果</h3>
-                    </div>
-                    <div class="panel-body" id="span_result">
-                        <p><code id="json_text">{!! $return??'' !!}</code></p>
-                    </div>
-                </div>
-                <!-- <h3>返回结果</h3>
-                <p><code>de id="json_text">{$return}</code></p> -->
             </div>
             <!--info-->
             <!--test-->
             <div class="tab-pane fade in" id="test">
                 <br>
                 <!--head-->
-                <div class="panel panel-primary" style="border-color: #1a2933">
-                    <div class="panel-heading" style="border-color: #1a2933;background-color: #1a2933">
+                <div class="panel panel-primary" style="border-color: #00A881">
+                    <div class="panel-heading" style="border-color: #00A881;background-color: #00A881">
                         <h3 class="panel-title">接口参数</h3>
                     </div>
                     <div class="panel-body" style="overflow-x: hidden;">
@@ -135,26 +144,24 @@
                                 </div>
                                 <div class="col-sm-4"></div>
                             </div>
-
+                            <div class="form-group">
+                                <div class="col-sm-12 gray-line"></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label"></div>
+                                <div class="col-sm-6"><h4>header</h4></div>
+                                <div class="col-sm-4"></div>
+                            </div>
                             @if(!empty($doc['header']))
-                                <div class="form-group">
-                                    <div class="col-sm-12 gray-line"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-sm-2 control-label"></div>
-                                    <div class="col-sm-6"><h4>header</h4></div>
-                                    <div class="col-sm-4"></div>
-                                </div>
 
                                 @foreach($doc['header'] as $head)
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"> {{$head['name']}}</label>
-                                    <div class="col-sm-6">
-                                        <input class="form-control classHeaderInput" type="text" id="id{{$loop->index}}" name="{{$head['name']}}" value="{{$head['default']??''}}">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label"> {{$head['name']}}</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control classHeaderInput" type="text" id="id{{$loop->index}}" name="{{$head['name']}}" value="{{$head['default']??''}}">
+                                        </div>
+                                        <div class="col-sm-4"><label class="control-label text-warning"></label></div>
                                     </div>
-                                    <div class="col-sm-4"><label class="control-label text-warning"></label></div>
-                                </div>
                                 @endforeach
                             @endif
                             <div class="form-group">
@@ -162,22 +169,22 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-2 control-label"></div>
-                                <div class="col-sm-6"><h4>请求参数</h4></div>
+                                <div class="col-sm-6"><h4>参数</h4></div>
                                 <div class="col-sm-4"></div>
                             </div>
 
 
                             @if(!empty($doc['param']))
 
-                            @foreach($doc['param'] as $param)
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">{{$param['name']}}</label>
-                                <div class="col-sm-6">
-                                    <input class="form-control  classParamInput" type="text" name="{{$param['name']}}" value="{{$param['default']??''}}">
-                                </div>
-                                <div class="col-sm-4"><label class="control-label text-warning"></label></div>
-                            </div>
-                            @endforeach
+                                @foreach($doc['param'] as $param)
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">{{$param['name']}}</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control  classParamInput" type="text" name="{{$param['name']}}" value="{{$param['default']??''}}">
+                                        </div>
+                                        <div class="col-sm-4"><label class="control-label text-warning"></label></div>
+                                    </div>
+                                @endforeach
                             @endif
                         </form>
                         <div class="form-group">
@@ -192,8 +199,8 @@
                 </div>
                 <!--head-->
 
-                <div class="panel panel-primary" style="border-color: #1a2933;">
-                    <div class="panel-heading" style="border-color: #1a2933;background-color: #1a2933">
+                <div class="panel panel-primary" style="border-color: #00A881;">
+                    <div class="panel-heading" style="border-color: #00A881;background-color: #00A881">
                         <h3 class="panel-title">返回结果</h3>
                     </div>
                     <div class="panel-body" id="span_result">
@@ -347,41 +354,41 @@
 
     // function init(){
 
-        $("#addParam").click(function(){
-            var name = $('input[name="addparam"]').val();
-            if(name.length > 0){
-                var group = $("#apiform").find('.form-group').last().clone(true);
-                $(group).find('.col-sm-2').text(name);
-                $(group).find('.form-control').attr('name',name);
-                $(group).find('.form-control').attr('value','');
-                $(group).find('.text-warning').text('');
-                $("#apiform").append(group);
-            }
-            $('#addParamModal').modal('hide');
-        });
+    $("#addParam").click(function(){
+        var name = $('input[name="addparam"]').val();
+        if(name.length > 0){
+            var group = $("#apiform").find('.form-group').last().clone(true);
+            $(group).find('.col-sm-2').text(name);
+            $(group).find('.form-control').attr('name',name);
+            $(group).find('.form-control').attr('value','');
+            $(group).find('.text-warning').text('');
+            $("#apiform").append(group);
+        }
+        $('#addParamModal').modal('hide');
+    });
 
-        $("#addJson").click(function(){
-            window.json = $('textarea[name="jsonText"]').val();
-            Process();
-            $('#addJosnTextmModal').modal('hide');
-        });
+    $("#addJson").click(function(){
+        window.json = $('textarea[name="jsonText"]').val();
+        Process();
+        $('#addJosnTextmModal').modal('hide');
+    });
     // }
 
 
     function getFormJson(a) {
-      var o = {};
-      // var a = $(form).serializeArray();
-      $.each(a, function () {
-      if (o[this.name] !== undefined) {
-      if (!o[this.name].push) {
-      o[this.name] = [o[this.name]];
-      }
-      o[this.name].push(this.value || '');
-      } else {
-      o[this.name] = this.value || '';
-      }
-      });
-      return o;
+        var o = {};
+        // var a = $(form).serializeArray();
+        $.each(a, function () {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
     }
 
 </script>
